@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bank-container animate-card">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🏦 Future Bank</h1>
+        <span class="menu" onclick="toggleHistory()">☰</span>
+    </div>
+
+    <p class="tagline">Secure • Smart • Digital Banking</p>
+
+    <!-- User Details -->
+    <input type="text" id="username" placeholder="Customer Name">
+    <input type="text" id="account" placeholder="Account Number">
+
+    <button id="continueBtn" class="start-btn">Continue</button>
+
+    <!-- Bank Options -->
+    <div id="bankOptions" class="hidden">
+        <input type="number" id="amount" placeholder="Enter Amount">
+
+        <div class="buttons">
+            <button class="deposit">Deposit</button>
+            <button class="withdraw">Withdraw</button>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div id="output" class="output">
+        Welcome to <b>Future Bank 🏦</b><br>
+        Please enter your details to continue
+    </div>
+
+    <!-- Thank You -->
+    <div id="thankYou" class="thank-you hidden">
+        Thanks for visiting <b>Future Bank 🏦</b> 😊
+    </div>
+
+    <!-- History -->
+    <div id="historyPopup" class="history-popup hidden">
+        <h3>Transaction History</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">© Created by <b>Rajendra</b></div>
+
+</div>
+
+<script src="future_bank.js"></script>
+</body>
+</html>
+

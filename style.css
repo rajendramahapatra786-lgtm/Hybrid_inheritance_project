@@ -1,0 +1,149 @@
+/* --- Reset --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* --- Body --- */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* --- Container --- */
+.bank-container {
+    width: min(90vw, 520px);
+    min-height: 75vh;
+    background: rgba(255,255,255,0.12);
+    padding: 35px;
+    border-radius: 28px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* --- Animation --- */
+.animate-card {
+    animation: fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu {
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/* --- Text --- */
+.tagline {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+/* --- Inputs --- */
+input {
+    width: 100%;
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 16px;
+    border: none;
+    font-size: 17px;
+}
+
+/* --- Buttons --- */
+button {
+    padding: 16px;
+    border-radius: 18px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.start-btn {
+    width: 100%;
+    background: #00d4ff;
+}
+
+.buttons {
+    display: flex;
+    gap: 14px;
+    margin-top: 15px;
+}
+
+.deposit { flex: 1; background: #2ecc71; }
+.withdraw { flex: 1; background: #ff4d4d; }
+
+/* --- Output --- */
+.output {
+    margin-top: 20px;
+    padding: 18px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 18px;
+    text-align: center;
+    font-size: 17px;
+}
+
+/* --- Thank You --- */
+.thank-you {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 15px;
+    opacity: 0.85;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.85; }
+}
+
+/* --- History Popup --- */
+.history-popup {
+    position: absolute;
+    top: 80px;
+    right: 25px;
+    width: 320px;
+    max-height: 260px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.92);
+    padding: 16px;
+    border-radius: 18px;
+}
+
+.history-popup ul {
+    list-style: none;
+}
+
+/* --- Footer --- */
+.footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+/* --- Utility --- */
+.hidden {
+    display: none;
+}
