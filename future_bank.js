@@ -1,105 +1,179 @@
 let accounts = JSON.parse(localStorage.getItem("accounts")) || {};
 let currentAccount = null;
 
+const nameInput = document.getElementById("username");
+const accountInput = document.getElementById("account");
+const amountInput = document.getElementById("amount");
+
 const output = document.getElementById("output");
 const historyPopup = document.getElementById("historyPopup");
 const historyList = document.getElementById("historyList");
 const thankYou = document.getElementById("thankYou");
 
-document.getElementById("continueBtn").addEventListener("click", startBank);
+const continueBtn = document.getElementById("continueBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const bankOptions = document.getElementById("bankOptions");
+const suggestionBox = document.getElementById("nameSuggestions");
+
+continueBtn.addEventListener("click", startBank);
+logoutBtn.addEventListener("click", logout);
+
 document.querySelector(".deposit").addEventListener("click", deposit);
 document.querySelector(".withdraw").addEventListener("click", withdraw);
 
-// ---------------- START / SELECT ACCOUNT ----------------
-function startBank() {
-    const name = document.getElementById("username").value.trim();
-    const accNo = document.getElementById("account").value.trim();
+nameInput.addEventListener("input", showNameSuggestions);
 
-    if (!name || !accNo) {
-        alert("Please enter name and account number");
+// ---------- SHOW NAME SUGGESTIONS ----------
+function showNameSuggestions() {
+    const input = nameInput.value.toLowerCase();
+    suggestionBox.innerHTML = "";
+
+    if (!input) {
+        suggestionBox.classList.add("hidden");
         return;
     }
 
-    // Create account if new
-    if (!accounts[accNo]) {
-        accounts[accNo] = {
-            name: name,
-            balance: 0,
-            history: []
-        };
+    const used = new Set();
+
+    for (let accNo in accounts) {
+        const name = accounts[accNo].name;
+        if (name.toLowerCase().startsWith(input) && !used.has(name)) {
+            used.add(name);
+
+            const li = document.createElement("li");
+            li.textContent = name;
+            li.onclick = () => selectUser(name);
+            suggestionBox.appendChild(li);
+        }
+    }
+
+    suggestionBox.classList.toggle("hidden", used.size === 0);
+}
+
+function selectUser(name) {
+    nameInput.value = name;
+    suggestionBox.classList.add("hidden");
+
+    for (let accNo in accounts) {
+        if (accounts[accNo].name === name) {
+            accountInput.value = accNo;
+            updateStatus(`Welcome back ${name}`);
+            break;
+        }
+    }
+}
+
+// ---------- START BANK ----------
+function startBank() {
+    const name = nameInput.value.trim();
+    const accNo = accountInput.value.trim();
+
+    if (!name) return alert("Enter customer name");
+    if (!/^\d{12}$/.test(accNo)) return alert("Account number must be 12 digits");
+
+    if (accounts[accNo]) {
+        if (accounts[accNo].name !== name) {
+            return alert("Account number already linked to another name");
+        }
+    } else {
+        accounts[accNo] = { name, balance: 0, history: [] };
     }
 
     currentAccount = accNo;
     saveAccounts();
 
-    document.getElementById("bankOptions").classList.remove("hidden");
-    document.getElementById("continueBtn").disabled = true;
+    bankOptions.classList.remove("hidden");
+    continueBtn.disabled = true;
+    logoutBtn.classList.remove("hidden");
+    suggestionBox.classList.add("hidden");
 
-    updateStatus(`Welcome ${accounts[accNo].name}`);
+    updateStatus(`Welcome ${name}`);
     renderHistory();
-    thankYou.classList.add("hidden");
 }
 
-// ---------------- DEPOSIT ----------------
+// ---------- LOGOUT ----------
+function logout() {
+    currentAccount = null;
+
+    nameInput.value = "";
+    accountInput.value = "";
+    amountInput.value = "";
+
+    bankOptions.classList.add("hidden");
+    logoutBtn.classList.add("hidden");
+    continueBtn.disabled = false;
+    historyPopup.classList.add("hidden");
+
+    output.innerHTML = `
+        Welcome to <b>Future Bank 🏦</b><br>
+        Please enter your details to continue
+    `;
+}
+
+// ---------- TRANSACTIONS ----------
 function deposit() {
-    const amount = Number(document.getElementById("amount").value);
-    if (amount < 100) {
-        alert("Minimum deposit is ₹100");
-        return;
-    }
+    if (!currentAccount) return alert("Login first");
 
-    accounts[currentAccount].balance += amount;
-    accounts[currentAccount].history.push(`+ ₹${amount} Deposit`);
+    const amt = Number(amountInput.value);
+    if (amt <= 0) return;
 
-    finishTransaction(`₹${amount} deposited successfully`);
+    accounts[currentAccount].balance += amt;
+    accounts[currentAccount].history.push({
+        type: "Deposit",
+        amount: amt,
+        date: new Date().toLocaleString()
+    });
+
+    finishTransaction(`₹${amt} deposited`);
 }
 
-// ---------------- WITHDRAW ----------------
 function withdraw() {
-    const amount = Number(document.getElementById("amount").value);
-    if (amount > accounts[currentAccount].balance) {
-        updateStatus("Insufficient balance");
-        return;
-    }
+    if (!currentAccount) return alert("Login first");
 
-    accounts[currentAccount].balance -= amount;
-    accounts[currentAccount].history.push(`- ₹${amount} Withdraw`);
+    const amt = Number(amountInput.value);
+    if (amt <= 0 || amt > accounts[currentAccount].balance) return;
 
-    finishTransaction(`₹${amount} withdrawn successfully`);
+    accounts[currentAccount].balance -= amt;
+    accounts[currentAccount].history.push({
+        type: "Withdraw",
+        amount: amt,
+        date: new Date().toLocaleString()
+    });
+
+    finishTransaction(`₹${amt} withdrawn`);
 }
 
-// ---------------- COMMON ----------------
-function finishTransaction(message) {
+function finishTransaction(msg) {
     saveAccounts();
-    updateStatus(message);
+    updateStatus(msg);
     renderHistory();
-    document.getElementById("amount").value = "";
+    amountInput.value = "";
     thankYou.classList.remove("hidden");
 }
 
-// ---------------- HISTORY ----------------
+// ---------- HISTORY ----------
 function toggleHistory() {
     historyPopup.classList.toggle("hidden");
 }
 
 function renderHistory() {
     historyList.innerHTML = "";
-    accounts[currentAccount].history.forEach(item => {
+    accounts[currentAccount]?.history.forEach(h => {
         const li = document.createElement("li");
-        li.textContent = item;
+        li.textContent = `${h.type} ₹${h.amount} (${h.date})`;
         historyList.appendChild(li);
     });
 }
 
-// ---------------- UI ----------------
-function updateStatus(message) {
+// ---------- UI ----------
+function updateStatus(msg) {
     output.innerHTML = `
-        ${message}<br>
-        Balance: ₹${accounts[currentAccount].balance}
+        ${msg}<br>
+        Balance: ₹${currentAccount ? accounts[currentAccount].balance : 0}
     `;
 }
 
-// ---------------- STORAGE ----------------
+// ---------- STORAGE ----------
 function saveAccounts() {
     localStorage.setItem("accounts", JSON.stringify(accounts));
 }
