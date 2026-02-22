@@ -1,5 +1,3 @@
-
-
 class Bank:
     def __init__(self):
         # Store all accounts
