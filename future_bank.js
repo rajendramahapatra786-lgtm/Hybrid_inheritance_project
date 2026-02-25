@@ -23,6 +23,15 @@ document.querySelector(".withdraw").addEventListener("click", withdraw);
 
 nameInput.addEventListener("input", showNameSuggestions);
 
+// ✅ allow only letters & spaces in name
+nameInput.addEventListener("input", () => {
+    nameInput.value = nameInput.value.replace(/[^A-Za-z ]/g, "");
+});
+
+accountInput.addEventListener("input", () => {
+    accountInput.value = accountInput.value.replace(/\D/g, "");
+});
+
 // ---------- SHOW NAME SUGGESTIONS ----------
 function showNameSuggestions() {
     const input = nameInput.value.toLowerCase();
@@ -69,7 +78,21 @@ function startBank() {
     const accNo = accountInput.value.trim();
 
     if (!name) return alert("Enter customer name");
-    if (!/^\d{12}$/.test(accNo)) return alert("Account number must be 12 digits");
+
+    // ✅ Name validation (letters & spaces only)
+    if (!/^[A-Za-z ]+$/.test(name)) {
+        return alert("Name must contain only letters");
+    }
+
+    // ✅ Account must contain only numbers
+    if (!/^\d+$/.test(accNo)) {
+        return alert("Account number must contain only digits");
+    }
+
+    // ✅ Must be exactly 12 digits
+    if (!/^\d{12}$/.test(accNo)) {
+        return alert("Account number must be 12 digits");
+    }
 
     if (accounts[accNo]) {
         if (accounts[accNo].name !== name) {
@@ -90,7 +113,6 @@ function startBank() {
     updateStatus(`Welcome ${name}`);
     renderHistory();
 }
-
 // ---------- LOGOUT ----------
 function logout() {
     currentAccount = null;
