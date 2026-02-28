@@ -126,10 +126,19 @@ function logout() {
     continueBtn.disabled = false;
     historyPopup.classList.add("hidden");
 
-    output.innerHTML = `
-        Welcome to <b>Future Bank 🏦</b><br>
-        Please enter your details to continue
-    `;
+    // ✅ Show thank you message
+    thankYou.classList.remove("hidden");
+    output.innerHTML = "";
+
+    // ✅ Hide after 5 seconds
+    setTimeout(() => {
+        thankYou.classList.add("hidden");
+
+        output.innerHTML = `
+            Welcome to <b>Future Bank 🏦</b><br>
+            Please enter your details to continue
+        `;
+    }, 3000); // 3 seconds
 }
 
 // ---------- TRANSACTIONS ----------
